@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#176B3A">
+<meta name="description" content="SNRP Farmer - Simple farmer to market prototype">
+<title>SNRP Farmer | SNRP Group</title>
+<style>
+:root{--g:#176b3a;--g2:#eaf5ee;--dark:#173022;--muted:#64736a;--bg:#f5f8f6;--white:#fff;--orange:#e28b24;--border:#dbe6df}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--dark)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app{max-width:480px;margin:auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:82px}
+.top{background:var(--g);color:#fff;padding:18px 18px 20px;position:sticky;top:0;z-index:10}
+.brand{font-weight:800;font-size:22px}.sub{font-size:12px;opacity:.9;margin-top:4px}
+.screen{padding:16px}.hidden{display:none!important}
+.hero{background:var(--g2);border:1px solid #d4e8da;border-radius:18px;padding:18px;margin-bottom:14px}
+.hero h2{margin:0 0 6px;font-size:22px}.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;min-height:110px;box-shadow:0 2px 8px #17302208}
+.card .ico{font-size:28px}.card h3{font-size:15px;margin:8px 0 4px}.card p{margin:0;color:var(--muted);font-size:12px}
+.form-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px}
+label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,select,textarea{width:100%;padding:13px;border:1px solid #cbd9d0;border-radius:12px;background:#fff;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--g)}
+.btn{border:0;border-radius:12px;padding:13px 16px;font-weight:700}.primary{background:var(--g);color:#fff}.secondary{background:var(--g2);color:var(--g)}.full{width:100%;margin-top:16px}
+.back{background:transparent;border:0;color:#fff;padding:0;margin-bottom:10px;font-weight:700}
+.list{display:flex;flex-direction:column;gap:10px}.list-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center}.crop-img{width:58px;height:58px;border-radius:12px;background:var(--g2);display:grid;place-items:center;font-size:27px}.list-card h3{margin:0 0 4px;font-size:15px}.list-card p{margin:2px 0;color:var(--muted);font-size:12px}.price{margin-left:auto;font-weight:800;color:var(--g);white-space:nowrap}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:480px;width:100%;background:#fff;border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:9px 4px;z-index:20}.nav button{background:none;border:0;color:var(--muted);font-size:11px}.nav button b{display:block;font-size:20px;margin-bottom:2px}.nav button.active{color:var(--g)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#173022;color:#fff;padding:11px 16px;border-radius:12px;display:none;z-index:50;font-size:13px}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(160deg,#176b3a,#0d4d29)}
+.loginbox{background:#fff;border-radius:24px;padding:26px;width:100%;max-width:420px}.logo{width:70px;height:70px;border-radius:20px;background:var(--g2);display:grid;place-items:center;font-size:40px;margin:auto}.loginbox h1{text-align:center;margin:15px 0 4px}.loginbox .tag{text-align:center;color:var(--muted);font-size:13px}.lang{display:flex;gap:8px;margin:16px 0}.lang button{flex:1;border:1px solid var(--border);background:#fff;padding:9px;border-radius:10px}.lang button.on{background:var(--g);color:#fff}
+.small-note{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.5}.section-title{display:flex;justify-content:space-between;align-items:center;margin:18px 0 10px}.section-title h2{font-size:18px;margin:0}
+.chips{display:flex;gap:8px;overflow:auto;padding-bottom:3px}.chip{white-space:nowrap;background:#fff;border:1px solid var(--border);border-radius:20px;padding:8px 12px;font-size:12px}.chip.active{background:var(--g);color:#fff;border-color:var(--g)}
+@media(min-width:600px){body{padding:20px}.app{border-radius:22px;overflow:hidden;box-shadow:0 8px 40px #0002}}
+</style>
+</head>
+<body>
+
+<div id="login" class="login">
+  <div class="loginbox">
+    <div class="logo">🌾</div>
+    <h1>SNRP Farmer</h1>
+    <div class="tag">SNRP Group • किसान से बाजार तक, आसान रास्ता<br>Farmer to market, an easy route</div>
+    <div class="lang"><button class="on">हिंदी + English</button><button onclick="toast('Both languages are shown together in Version 1')">Language</button></div>
+    <label>Mobile Number / मोबाइल नंबर</label>
+    <input id="phone" type="tel" maxlength="10" placeholder="Enter 10 digit number">
+    <button class="btn primary full" onclick="sendOtp()">Send OTP / OTP भेजें</button>
+    <div id="otpbox" class="hidden">
+      <label>Demo OTP / डेमो OTP</label>
+      <input id="otp" type="text" maxlength="6" placeholder="Enter 123456">
+      <button class="btn primary full" onclick="verifyOtp()">Login / लॉगिन</button>
+    </div>
+    <p class="small-note">Prototype only: OTP is demo <b>123456</b>. No real SMS or payment is connected yet.</p>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+  <header class="top"><div class="brand">🌾 SNRP Farmer</div><div class="sub">SNRP Group • किसान से बाजार तक, आसान रास्ता</div></header>
+
+  <main id="home" class="screen">
+    <div class="hero"><h2>Namaste / नमस्ते 👋</h2><div class="muted">Farmer & Merchant services in one simple place.</div></div>
+    <div class="grid">
+      <div class="card" onclick="show('sell')"><div class="ico">🌾</div><h3>Sell Crop / फसल बेचें</h3><p>Add your crop and price</p></div>
+      <div class="card" onclick="show('buy')"><div class="ico">🛒</div><h3>Buy Crop / फसल खरीदें</h3><p>Find available crops</p></div>
+      <div class="card" onclick="show('merchant')"><div class="ico">🏪</div><h3>Merchant / व्यापारी</h3><p>Buy & post requirements</p></div>
+      <div class="card" onclick="show('weather')"><div class="ico">🌦️</div><h3>Weather / मौसम</h3><p>Demo forecast interface</p></div>
+      <div class="card" onclick="show('mandi')"><div class="ico">📊</div><h3>Mandi Price / मंडी भाव</h3><p>Demo market reference</p></div>
+      <div class="card" onclick="show('advice')"><div class="ico">🌱</div><h3>Crop Advice / फसल सलाह</h3><p>Basic farming guidance</p></div>
+    </div>
+    <div class="section-title"><h2>More / और</h2></div>
+    <div class="grid">
+      <div class="card" onclick="show('tools')"><div class="ico">🚜</div><h3>Farm Tools / खेती tools</h3><p>Simple calculators</p></div>
+      <div class="card" onclick="show('orders')"><div class="ico">📦</div><h3>Orders / ऑर्डर</h3><p>Enquiries & status</p></div>
+      <div class="card" onclick="show('schemes')"><div class="ico">📢</div><h3>Schemes / योजनाएं</h3><p>Government information</p></div>
+      <div class="card" onclick="show('profile')"><div class="ico">👤</div><h3>Profile / प्रोफाइल</h3><p>Your account</p></div>
+    </div>
+  </main>
+
+  <main id="sell" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Sell Crop / फसल बेचें</h2></div>
+    <div class="form-card">
+      <label>Crop Image / फसल फोटो</label><input type="file" accept="image/*" onchange="previewImage(event)">
+      <div id="preview" class="hidden" style="margin-top:10px"></div>
+      <label>Crop Name / फसल का नाम</label><select id="sellcrop"></select>
+      <label>Quantity / मात्रा</label><input id="qty" placeholder="e.g. 500 kg">
+      <label>Farmer Price / किसान की कीमत</label><input id="fprice" type="number" placeholder="₹ per kg">
+      <label>Location / स्थान</label><input id="loc" placeholder="Village, District, State">
+      <button class="btn primary full" onclick="publishCrop()">Publish Crop / फसल डालें</button>
+    </div>
+  </main>
+
+  <main id="buy" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Buy Crop / फसल खरीदें</h2></div>
+    <div class="chips" id="chips"></div>
+    <div class="list" id="cropList" style="margin-top:12px"></div>
+  </main>
+
+  <main id="merchant" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Merchant / व्यापारी</h2></div>
+    <div class="grid">
+      <div class="card" onclick="show('buy')"><div class="ico">🛒</div><h3>Buy Crops / फसल खरीदें</h3><p>View farmer listings</p></div>
+      <div class="card" onclick="show('requirement')"><div class="ico">📢</div><h3>Post Requirement / जरूरत डालें</h3><p>Tell farmers what you need</p></div>
+      <div class="card" onclick="show('orders')"><div class="ico">📦</div><h3>My Requirements / मेरी जरूरतें</h3><p>View posted requirements</p></div>
+      <div class="card" onclick="toast('Demo: farmer enquiries will connect after backend is added')"><div class="ico">🤝</div><h3>Farmer Enquiries / किसान पूछताछ</h3><p>Demo contact</p></div>
+    </div>
+  </main>
+
+  <main id="requirement" class="screen hidden">
+    <button class="back" onclick="show('merchant')">← Back / वापस</button>
+    <div class="section-title"><h2>Post Requirement / जरूरत डालें</h2></div>
+    <div class="form-card">
+      <label>Crop / फसल</label><select id="reqcrop"></select>
+      <label>Required Quantity / जरूरी मात्रा</label><input placeholder="e.g. 5000 kg">
+      <label>Offer Price / ऑफर कीमत</label><input type="number" placeholder="₹ per kg">
+      <label>Location / स्थान</label><input placeholder="City, District, State">
+      <label>Required Date / तारीख</label><input type="date">
+      <button class="btn primary full" onclick="toast('Requirement saved in this prototype')">Post Requirement / जरूरत डालें</button>
+    </div>
+  </main>
+
+  <main id="weather" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Weather / मौसम</h2></div>
+    <div class="hero"><h2>28°C ☁️</h2><div>Partly Cloudy / आंशिक बादल</div><p class="muted">Lucknow, Uttar Pradesh • Demo data</p></div>
+    <div class="grid">
+      <div class="card"><div class="ico">🌧️</div><h3>Rain / बारिश</h3><p>30% chance</p></div>
+      <div class="card"><div class="ico">💧</div><h3>Humidity / नमी</h3><p>62%</p></div>
+      <div class="card"><div class="ico">💨</div><h3>Wind / हवा</h3><p>12 km/h</p></div>
+      <div class="card"><div class="ico">🌡️</div><h3>Temp / तापमान</h3><p>27–31°C</p></div>
+    </div>
+    <p class="small-note">Live weather will be connected through a trusted API in a later version.</p>
+  </main>
+
+  <main id="mandi" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Mandi Price / मंडी भाव</h2></div>
+    <div class="list" id="mandiList"></div>
+    <p class="small-note">Demo reference only. Actual market prices can vary. Live data will be connected later.</p>
+  </main>
+
+  <main id="advice" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Crop Advice / फसल सलाह</h2></div>
+    <div class="form-card">
+      <label>Choose Crop / फसल चुनें</label><select id="advicecrop"></select>
+      <label>Question / सवाल</label><textarea rows="4" placeholder="Write your farming question / अपनी खेती का सवाल लिखें"></textarea>
+      <button class="btn primary full" onclick="toast('Demo advice request saved')">Get Advice / सलाह लें</button>
+    </div>
+    <div class="hero" style="margin-top:14px"><b>🌱 Basic Tips / सामान्य सलाह</b><p class="muted">Use suitable seed, monitor soil moisture, follow crop-specific practices and consult a qualified expert when needed.</p></div>
+  </main>
+
+  <main id="tools" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Farm Tools / खेती के tools</h2></div>
+    <div class="form-card">
+      <label>Area / खेत का क्षेत्रफल (acre)</label><input id="area" type="number" placeholder="1">
+      <label>Cost per acre / प्रति acre लागत</label><input id="cost" type="number" placeholder="10000">
+      <button class="btn primary full" onclick="calc()">Calculate / गणना करें</button>
+      <div id="result" class="hero hidden" style="margin-top:14px"></div>
+    </div>
+  </main>
+
+  <main id="orders" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Orders / ऑर्डर</h2></div>
+    <div class="hero"><b>📦 No real orders yet / अभी कोई real order नहीं</b><p class="muted">Your future enquiries and order status will appear here.</p></div>
+  </main>
+
+  <main id="schemes" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Government Schemes / सरकारी योजनाएं</h2></div>
+    <div class="list">
+      <div class="list-card"><div class="crop-img">📢</div><div><h3>Scheme Information / योजना जानकारी</h3><p>Official scheme information will be linked in a later version.</p></div></div>
+      <div class="list-card"><div class="crop-img">ℹ️</div><div><h3>Eligibility / पात्रता</h3><p>Eligibility should be checked from official sources.</p></div></div>
+    </div>
+  </main>
+
+  <main id="profile" class="screen hidden">
+    <button class="back" onclick="show('home')">← Back / वापस</button>
+    <div class="section-title"><h2>Profile / प्रोफाइल</h2></div>
+    <div class="form-card">
+      <label>Name / नाम</label><input id="pname" placeholder="Your name">
+      <label>Village / गाँव</label><input id="pvillage" placeholder="Village">
+      <label>District / जिला</label><input id="pdistrict" placeholder="District">
+      <label>State / राज्य</label><input value="Uttar Pradesh">
+      <button class="btn primary full" onclick="saveProfile()">Save Profile / प्रोफाइल सेव करें</button>
+      <button class="btn secondary full" onclick="logout()">Logout / लॉगआउट</button>
+    </div>
+  </main>
+
+  <nav class="nav">
+    <button class="active" onclick="show('home',this)"><b>🏠</b>Home</button>
+    <button onclick="show('sell',this)"><b>🌾</b>Sell</button>
+    <button onclick="show('buy',this)"><b>🛒</b>Buy</button>
+    <button onclick="show('merchant',this)"><b>🏪</b>Merchant</button>
+    <button onclick="show('profile',this)"><b>👤</b>Profile</button>
+  </nav>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const crops=[
+["Grains / अनाज","🌾",["Wheat / गेहूं","Paddy / धान","Maize / मक्का","Bajra / बाजरा","Jowar / ज्वार","Barley / जौ"]],
+["Pulses / दालें","🫘",["Gram / चना","Lentil / मसूर","Arhar / अरहर","Moong / मूंग","Urad / उड़द","Peas / मटर"]],
+["Oilseeds / तिलहन","🌻",["Mustard / सरसों","Soybean / सोयाबीन","Groundnut / मूंगफली","Sesame / तिल","Sunflower / सूरजमुखी"]],
+["Vegetables / सब्ज़ियाँ","🥬",["Potato / आलू","Onion / प्याज","Tomato / टमाटर","Chilli / मिर्च","Cauliflower / फूलगोभी","Cabbage / पत्तागोभी","Okra / भिंडी","Brinjal / बैंगन","Carrot / गाजर","Peas / मटर"]],
+["Fruits / फल","🍎",["Mango / आम","Banana / केला","Apple / सेब","Orange / संतरा","Guava / अमरूद","Watermelon / तरबूज","Muskmelon / खरबूजा","Grapes / अंगूर","Pomegranate / अनार","Papaya / पपीता","Kiwi / कीवी","Pineapple / अनानास","Coconut / नारियल","Lemon / नींबू","Litchi / लीची"]],
+["Spices / मसाले","🌿",["Turmeric / हल्दी","Ginger / अदरक","Coriander / धनिया","Red Chilli / लाल मिर्च","Cumin / जीरा","Garlic / लहसुन"]],
+["Cash Crops / नकदी फसलें","🌱",["Sugarcane / गन्ना","Cotton / कपास","Jute / जूट"]],
+["Other / अन्य","➕",["Other / अन्य"]]
+];
+const allCrops=crops.flatMap(x=>x[2]);
+const demoListings=[
+["Wheat / गेहूं","🌾","500 kg","₹27/kg","Farmer • Nearby"],
+["Potato / आलू","🥔","1,000 kg","₹18/kg","Farmer • Nearby"],
+["Mango / आम","🥭","300 kg","₹45/kg","Farmer • Nearby"],
+["Mustard / सरसों","🌻","700 kg","₹58/kg","Farmer • Nearby"]
+];
+function fillSelect(id){const s=document.getElementById(id); if(!s)return; s.innerHTML=allCrops.map(c=>`<option>${c}</option>`).join("")}
+["sellcrop","reqcrop","advicecrop"].forEach(fillSelect);
+function sendOtp(){const p=document.getElementById("phone").value.trim();if(!/^\d{10}$/.test(p)){toast("Enter a valid 10 digit number / 10 digit नंबर डालें");return}document.getElementById("otpbox").classList.remove("hidden");toast("Demo OTP is 123456")}
+function verifyOtp(){if(document.getElementById("otp").value!=="123456"){toast("Demo OTP: 123456");return}localStorage.setItem("snrp_logged","1");document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.remove("hidden");show("home")}
+function show(id,btn){document.querySelectorAll("main.screen").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");window.scrollTo(0,0)}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display="none",2400)}
+function previewImage(e){const f=e.target.files[0],p=document.getElementById("preview");if(!f)return;p.classList.remove("hidden");p.innerHTML=`<img src="${URL.createObjectURL(f)}" style="max-width:100%;max-height:180px;border-radius:12px">`}
+function publishCrop(){const crop=document.getElementById("sellcrop").value,qty=document.getElementById("qty").value,price=document.getElementById("fprice").value,loc=document.getElementById("loc").value;if(!qty||!price||!loc){toast("Fill quantity, price and location / जानकारी भरें");return}let saved=JSON.parse(localStorage.getItem("snrp_listings")||"[]");saved.unshift([crop,"🌾",qty,"₹"+price+"/kg","Your listing / आपकी listing"]);localStorage.setItem("snrp_listings",JSON.stringify(saved));toast("Crop published / फसल सफलतापूर्वक डाल दी गई");show("buy")}
+function renderBuy(filter="All"){
+  const box=document.getElementById("cropList");
+  if(filter==="All"){
+    const data=[...demoListings,...JSON.parse(localStorage.getItem("snrp_listings")||"[]")];
+    box.innerHTML=data.map(x=>`<div class="list-card" onclick="openCrop('${x[0]}')"><div class="crop-img">${x[1]}</div><div><h3>${x[0]}</h3><p>${x[2]} • ${x[4]}</p><p>📞 Contact / संपर्क available</p></div><div class="price">${x[3]}</div></div>`).join("");
+    return;
+  }
+  const cat=crops.find(x=>x[0]===filter);
+  if(!cat){box.innerHTML='<div class="hero">No crops found / कोई फसल नहीं मिली</div>';return}
+  box.innerHTML=`<div class="hero"><h2>${cat[1]} ${cat[0]}</h2><p class="muted">Select a crop / अपनी फसल चुनें</p></div>`+
+    cat[2].map((name,i)=>`<div class="list-card" onclick="openCrop('${name}')"><div class="crop-img">${cat[1]}</div><div><h3>${name}</h3><p>View sellers & details / विक्रेता और जानकारी देखें</p></div><div class="price">›</div></div>`).join("");
+}
+function renderChips(){
+  const c=document.getElementById("chips");
+  c.innerHTML=`<button class="chip active" onclick="renderBuy('All');setChip(this)">All / सभी</button>`+
+    crops.map(x=>`<button class="chip" onclick="renderBuy('${x[0]}');setChip(this)">${x[1]} ${x[0]}</button>`).join("");
+}
+function setChip(el){document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));el.classList.add("active")}
+function openCrop(name){
+  const parts=name.split(" / ");
+  const en=parts[0]||name, hi=parts[1]||"";
+  const box=document.getElementById("cropList");
+  box.innerHTML=`<button class="btn secondary" onclick="renderBuy('All');renderChips()">← Back / वापस</button>
+  <div class="hero" style="margin-top:12px"><h2>🌾 ${en} / ${hi}</h2>
+  <p class="muted">Crop details / फसल की जानकारी</p></div>
+  <div class="list-card"><div class="crop-img">📷</div><div><h3>Crop Image / फसल फोटो</h3><p>Farmer photo will appear here in the full version.</p></div></div>
+  <div class="list-card"><div class="crop-img">⚖️</div><div><h3>Quantity / मात्रा</h3><p>Available quantity will appear here.</p></div></div>
+  <div class="list-card"><div class="crop-img">💰</div><div><h3>Farmer Price / किसान की कीमत</h3><p>Price set by farmer will appear here.</p></div></div>
+  <div class="list-card"><div class="crop-img">📍</div><div><h3>Location / स्थान</h3><p>Farmer location will appear here.</p></div></div>
+  <button class="btn primary full" onclick="toast('Contact Farmer / किसान से संपर्क — demo')">📞 Contact Farmer / किसान से संपर्क</button>`;
+}
+function renderMandi(){const m=[["Wheat / गेहूं","₹2,700/q","🌾"],["Paddy / धान","₹2,350/q","🌾"],["Potato / आलू","₹1,800/q","🥔"],["Mustard / सरसों","₹5,800/q","🌻"]];document.getElementById("mandiList").innerHTML=m.map(x=>`<div class="list-card"><div class="crop-img">${x[2]}</div><div><h3>${x[0]}</h3><p>Market reference / बाजार संदर्भ</p></div><div class="price">${x[1]}</div></div>`).join("")}
+function calc(){const a=+document.getElementById("area").value,c=+document.getElementById("cost").value;if(!a||!c){toast("Enter area and cost / क्षेत्रफल और लागत डालें");return}const total=a*c;const r=document.getElementById("result");r.classList.remove("hidden");r.innerHTML=`<b>Estimated Cost / अनुमानित लागत: ₹${total.toLocaleString()}</b><p class="muted">This is a simple calculation for prototype testing.</p>`}
+function saveProfile(){localStorage.setItem("snrp_profile",JSON.stringify({name:document.getElementById("pname").value,village:document.getElementById("pvillage").value,district:document.getElementById("pdistrict").value}));toast("Profile saved / प्रोफाइल सेव हो गई")}
+function logout(){localStorage.removeItem("snrp_logged");location.reload()}
+renderChips();renderBuy();renderMandi();
+if(localStorage.getItem("snrp_logged")==="1"){document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.remove("hidden")}
+</script>
+</body>
+</html>
